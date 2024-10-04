@@ -1,0 +1,11 @@
+---
+servers:
+  vars:
+    ansible_user: vagrant
+    ansible_become: true
+    ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+  hosts:
+    build:
+      ansible_host: 192.0.0.100
+      ansible_ssh_pass: vagrant
+

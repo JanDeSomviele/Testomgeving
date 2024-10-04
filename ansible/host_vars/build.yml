@@ -1,0 +1,26 @@
+---
+rhbase_install_packages:
+      - bind-utils
+      - tree
+      - vim-enhanced
+      - git
+      - nano
+      - setroubleshoot-server
+      - tree
+      - wget
+      - epel-release
+prometheus_scrape_configs:
+  - job_name: 'node_exporter'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets:
+          - '192.0.0.100:9100'  # IP of srv001, update for all your VMs
+grafana_security:
+  admin_user: admin
+  admin_password: admin
+grafana_datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://192.0.0.100:9090
+    BasicAuth: false

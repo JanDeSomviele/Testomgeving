@@ -1,0 +1,29 @@
+---
+- name: Configure monitoring server
+  hosts: build 
+  become: true
+  roles:
+    - bertvv.rh-base
+    - prometheus.prometheus.prometheus
+    - prometheus.prometheus.node_exporter
+    - grafana.grafana.grafana
+
+  tasks:
+    - name: Add port 3000/tcp to firewalld
+      firewalld:
+        port: 3000/tcp
+        permanent: yes
+        state: enabled
+    - name: reload firewalld
+      ansible.builtin.service:
+        name: firewalld
+        state: reloaded
+    - name: Add port 9100/tcp to firewalld
+      firewalld:
+        port: 9100/tcp
+        permanent: yes
+        state: enabled
+    - name: reload firewalld
+      ansible.builtin.service:
+        name: firewalld
+        state: reloaded

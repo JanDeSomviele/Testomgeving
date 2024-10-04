@@ -1,0 +1,54 @@
+---
+- name: Install Jenkins
+  hosts: build
+  become: true
+  tasks:
+    - name: Download Jenkins repository file
+      get_url:
+        url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+        dest: /etc/yum.repos.d/jenkins.repo
+
+    - name: Import Jenkins GPG key
+      rpm_key:
+        key: https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+        state: present
+
+    - name: Update DNF cache
+      dnf:
+        name: ""
+        state: present
+
+    - name: Install Java 11
+      dnf:
+        name: "java-11-openjdk,java-11-openjdk-devel"
+        state: present
+
+    - name: Install Jenkins
+      dnf:
+        name: "jenkins"
+        state: present
+        disable_gpg_check: true
+
+    - name: Enable and start Jenkins service
+      systemd:
+        name: jenkins
+        enabled: yes
+        state: started
+
+    - name: Enable and start firewalld service
+      systemd:
+        name: firewalld
+        enabled: yes
+        state: started
+
+    - name: Allow port 8080 through the firewall
+      firewalld:
+        zone: public
+        port: 8080/tcp
+        state: enabled
+        permanent: yes
+
+    - name: reload firewalld
+      ansible.builtin.service:
+        name: firewalld
+        state: reloaded

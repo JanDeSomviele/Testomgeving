@@ -1,5 +1,5 @@
-# site.yml
+# Testomgeving/ansible/site.yml
 ---
-- hosts: all
-  roles:
-    - testomgeving
+- import_playbook: monitoring.yml
+- import_playbook: docker.yml
+- import_playbook: jenkins.yml

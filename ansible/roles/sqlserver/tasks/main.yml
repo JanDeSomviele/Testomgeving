@@ -1,0 +1,39 @@
+---
+- name: Install .NET and SQL Server
+  hosts: database
+
+  tasks:
+    - name: Update package cache (for apt)
+      become: yes
+      ansible_distribution: "{{ ansible_distribution }}"
+      ansible_distribution_release: "{{ ansible_distribution_release }}"
+      ansible_distribution_major_version: "{{ ansible_distribution_major_version }}"
+      apt:
+        update_cache: yes
+      when: ansible_pkg_mgr == 'apt'
+
+    - name: Install .NET SDK
+      become: yes
+      ansible_distribution: "{{ ansible_distribution }}"
+      ansible_distribution_release: "{{ ansible_distribution_release }}"
+      ansible_distribution_major_version: "{{ ansible_distribution_major_version }}"
+      command: "apt-get install -y dotnet-sdk-5.0"
+      when: ansible_pkg_mgr == 'apt'
+
+    - name: Install Entity Framework Core tools
+      become: yes
+      ansible_distribution: "{{ ansible_distribution }}"
+      ansible_distribution_release: "{{ ansible_distribution_release }}"
+      ansible_distribution_major_version: "{{ ansible_distribution_major_version }}"
+      command: "dotnet tool install --global dotnet-ef"
+      args:
+        creates: /usr/local/bin/dotnet-ef
+      when: ansible_pkg_mgr == 'apt'
+
+    - name: Install SQL Server packages
+      become: yes
+      ansible_distribution: "{{ ansible_distribution }}"
+      ansible_distribution_release: "{{ ansible_distribution_release }}"
+      ansible_distribution_major_version: "{{ ansible_distribution_major_version }}"
+      command: "apt-get install -y mssql-server"
+      when: ansible_pkg_mgr == 'apt'

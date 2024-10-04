@@ -1,0 +1,62 @@
+---
+- name: Installeer docker
+  hosts: build
+  gather_facts: false
+  become: true
+  vars:
+    ssh_key_filename: id_rsa_DevOps
+  tasks:
+    - name: Upgrade all packages on servers
+      dnf:
+        name: "*"
+        state: latest
+
+    - name: Uninstall old versions
+      dnf:
+        name:
+          - docker-client
+          - docker-client-latest
+          - docker-common
+          - docker-latest
+          - docker-latest-logrotate
+          - docker-logrotate
+          - docker-engine
+        state: absent
+
+    - name: Install dnf-utils
+      ansible.builtin.dnf:
+        name: dnf-utils
+        state: present
+
+    - name: Set up docker repository
+      shell: sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+
+    - name: Install Docker
+      ansible.builtin.dnf:
+        name: docker-ce
+        state: present
+
+    - name: Install the latest version of Docker Engine and containerd
+      dnf:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+      notify: Start and enable docker
+
+    - name: Start and enable docker
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+
+  handlers:
+    - name: Start and enable docker
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+

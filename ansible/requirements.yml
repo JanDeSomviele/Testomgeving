@@ -1,0 +1,6 @@
+---
+roles:
+  - name: bertvv.rh-base
+collections:
+  - name: prometheus.prometheus
+  - name: grafana.grafana
